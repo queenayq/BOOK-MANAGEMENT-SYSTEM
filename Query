@@ -1,0 +1,66 @@
+#include<iostream>
+#include"录入.cpp"
+Book *QueryBook(IN_PARAM char *cSeek,IN_PARAM int i_funtion) 
+{
+	Book *head=List();
+	int i_judge=0;   
+	Book *node,*head_2;
+	if(NULL==head->book_next)
+	{
+		printf("图书库存储的书籍量为零\n");
+		printf("不能进行查询\n");
+	}
+	else{
+	head_2=(Book *)malloc(sizeof(Book));
+	head_2->book_next=NULL;
+	node=(Book *)malloc(sizeof(Book));
+	node=head->book_next;
+	if(i_funtion==1)
+	{
+	while(NULL!=node)
+	{
+		if(!(strcmp(cSeek,node->cB_Name)))
+		{
+			i_judge=1;
+			AddNode(head_2,node);
+		}
+		node=node->book_next;
+	}
+	return head_2;
+	}
+	else if(i_funtion==3)
+	{
+	while(NULL!=node)
+	{
+		if(!(strcmp(cSeek,node->cB_Number)))
+		{
+			i_judge=1;
+			AddNode(head_2,node);
+		}
+		node=node->book_next;
+	}
+	}
+	else if(i_funtion==2)
+	{
+	while(NULL!=node)
+	{
+		if(!strcmp(cSeek,node->cB_Writer))
+		{
+			i_judge=1;
+			AddNode(head_2,node);
+		}
+		node=node->book_next; 
+	}
+	}
+	else if(i_funtion==4)
+	{
+		if(!strcmp(cSeek,node->cB_Sort))
+		{
+			i_judge=1;
+			AddNode(head_2,node);
+		}
+		node=node->book_next;
+	}
+	return head_2;
+    }
+};
