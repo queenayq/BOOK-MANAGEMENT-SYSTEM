@@ -1,0 +1,115 @@
+Person *People_Insert() //人物的文件录入和窗口插入
+{
+    Person *head=NULL;
+    Person *prev,*current;
+    FILE *fp;        //“FILE类型”指针变量，文件指针名，后续与fopen等函数组合使用
+	char line[1000];
+	char *result=NULL;
+	char filename[20]; //文件名字符串
+    int i,iMode=0,iWcount;
+    printf("please input the insert way：\n1.insert from file\n2.insert from the window\nplease input your choice：");
+    scanf("%d",&iMode);
+    if(iMode==1)   //文件录入
+ {
+       printf("please input filename：");
+       fflush(stdin);
+       scanf("%s",&filename);
+       strcat(filename,".csv");
+      while((fp=fopen(filename,"r"))==NULL)
+       {
+            printf("find file failed!please input filename again：");
+			fflush(stdin);
+			scanf("%s",filename);
+			strcat(filename,".csv");
+       }
+
+   if((fp=fopen("student.csv","r"))!=NULL)
+    {
+        while(fgets(line,MAXLEN,fp)!=NULL)
+        {
+            current=(Person *)malloc(sizeof(Person));
+            if(head==NULL)
+          {
+             head=current;
+             prev=current;
+          }
+
+           else
+          {
+              prev->Pnext=current;
+
+          }
+           result=strtok(line,",");
+           strcpy(current->cP_Name,result);
+
+           result=strtok(NULL,",");
+           strcpy(current->cP_Number,result);
+
+           result=strtok(NULL,",");
+           strcpy(current->cP_Code,result);
+
+           result=strtok(NULL,",");
+           strcpy(current->cP_Rank,result);
+
+           current->Pnext=NULL;
+           prev=current;
+        }
+    }
+    fclose(fp);
+ }
+
+    else           //窗口录入
+    {
+       printf("please input the number of people：");
+       scanf("%d",&iWcount);
+       for(i = 0;i < iWcount;i++)
+     {
+         current=(Person *)malloc(sizeof(Person));
+         printf("please input the %d person's imformation：name    number     code     rank\n",i+1);
+         printf("                                       ");
+         scanf("%s%s%s%s",&current->cP_Name,&current->cP_Number,&current->cP_Code,&current->cP_Rank);
+         if((fp=fopen("student.csv","at+"))!=NULL)
+         {
+             fprintf(fp,"%s,%s,%s,%s\n",current->cP_Name,current->cP_Number,current->cP_Code,current->cP_Rank);
+             free(current);
+         }
+        fclose(fp);
+     }
+
+      if((fp=fopen("student.csv","r"))!=NULL)
+    {
+        current=(Person *)malloc(sizeof(Person));
+        while(fgets(line,MAXLEN,fp)!=NULL)
+        {
+            if(head==NULL)
+          {
+             head=current;
+             prev=current;
+          }
+
+           else
+          {
+              prev->Pnext=current;
+
+          }
+
+           result=strtok(line,",");
+           strcpy(current->cP_Name,result);
+
+           result=strtok(NULL,",");
+           strcpy(current->cP_Number,result);
+
+           result=strtok(NULL,",");
+           strcpy(current->cP_Code,result);
+
+           result=strtok(NULL,",");
+           strcpy(current->cP_Rank,result);
+
+           current->Pnext=NULL;
+           prev=current;
+        }
+     }
+      fclose(fp);
+    }
+  return head;
+}
