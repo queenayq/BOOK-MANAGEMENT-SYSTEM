@@ -1,0 +1,50 @@
+Person *People_Query(Person *Head)   //人物的查询 传入链表头指针
+{
+    Person *pt;
+    pt=Head;
+    char cPeopel[18];
+    int iWay=0;
+    printf("please input the way you want to query:\n1.query with name\n2.query with number\n");
+    printf("pleaese input your choice:");
+    scanf("%d",&iWay);
+    while(iWay!=1&&iWay!=2)
+    {
+        printf("input error,please input again:");
+    }
+
+    if(iWay==1)  //姓名查询
+    {
+        printf("please input the name need query:");
+        scanf("%s",&cPeopel);
+        while(pt!=NULL)
+        {
+            if(0==strcmp(cPeopel,pt->cP_Name))
+            {
+                break;
+            }
+            else
+            {
+                printf("%s\n",pt->cP_Name);
+                pt=pt->Pnext;
+            }
+        }
+        return pt;
+    }
+    else         //账号查询
+    {
+        printf("please input the number need query:");
+        scanf("%s",&cPeopel);
+        while(pt!=NULL)
+       {
+          if(0==strcmp(cPeopel,pt->cP_Number))
+          {
+             break;
+          }
+          else
+          {
+              pt=pt->Pnext;
+          }
+       }
+       return pt;
+    }
+}
