@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include<Stdlib.h> 
+
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+int main()
+{
+  FILE *fp;
+  int ich;
+  int iidentify;
+  printf("请选择输入对象的身份:\n");
+  printf("1.System manager\n");
+  printf("2.Library manager\n");
+  printf("3.Teacher\n");
+  printf("4.Student\n");
+  printf("5.Book\n"); 
+  scanf("%d",&iidentify);
+  
+  if(iidentify==1)//输入系统管理员信息 
+  {
+  fp=fopen("C:\\C实训\\System manager information.csv","w");
+  printf("Please enter IDcode Name Sex:\n");
+  ich=getchar();
+  while(ich!=EOF)
+  {
+  	fputc(ich,fp);
+  	ich=getchar();
+  } 
+  fclose(fp);
+  }
+  
+   if(iidentify==2)//输入图书管理员信息 
+  {
+  fp=fopen("C:\\C实训\\Library manager information.csv","w");
+  printf("Please enter IDcode Name sex:\n");
+  ich=getchar();
+  while(ich!=EOF)
+  {
+  	fputc(ich,fp);
+  	ich=getchar();
+  } 
+  fclose(fp);
+  }
+  
+   if(iidentify==3)//输入老师信息 
+  {
+  fp=fopen("C:\\C实训\\Teacher information.csv","w");
+  printf("Please enter IDcode Name sex:\n");
+  ich=getchar();
+  while(ich!=EOF)
+  {
+  	fputc(ich,fp);
+  	ich=getchar();
+  } 
+  fclose(fp);
+  }
+  
+   if(iidentify==4)//输入学生信息 
+  {
+  fp=fopen("C:\\C实训\\Student information.csv","w");
+  printf("Please enter IDcode Name sex:\n");
+  ich=getchar();
+  while(ich!=EOF)
+  {
+  	fputc(ich,fp);
+  	ich=getchar();
+  } 
+  fclose(fp);
+  }
+  
+   if(iidentify==5)//输入图书信息 
+  {
+  fp=fopen("C:\\C实训\\Book information.csv","w");
+  printf("Please enter code name writer surplus price type edition:\n");
+  ich=getchar();
+  while(ich!=EOF)
+  {
+  	fputc(ich,fp);
+  	ich=getchar();
+  } 
+  fclose(fp);
+  }
+  return 0;
+}
+ 
