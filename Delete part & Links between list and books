@@ -1,0 +1,171 @@
+
+#include<stdio.h>
+#include<Windows.h>
+#include<stdlib.h>
+#include<string.h>
+#include<malloc.h>
+#define IN_PARAM
+#define OUT_PARAM
+typedef struct book
+{
+	char cB_Name[18];   //书名  
+	char cB_Number[18]; //编号
+	char cB_Writer[18]; //作者
+	char cB_Count[18];      //剩余馆藏
+	char cB_Price[18];      //价格
+	char cB_Sort[18];   //种类 
+	struct book *book_next; //指向下一个指针   
+}Book;
+Book *GetList() //获得头结点 
+{
+	Book *head=(Book *)malloc(sizeof(Book));
+	head->book_next=NULL;
+	return head;
+}
+void AddNode(IN_PARAM Book *head,IN_PARAM Book *node) //增加结点 
+{
+	node->book_next=head->book_next;
+	head->book_next=node;
+}
+void WriteFile(IN_PARAM Book *head) //将结点内容写入文件中 此为重新写入 
+{
+	FILE *fp;
+	Book *p=head->book_next;
+	if((fp=fopen("book.csv","w+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(1);
+	}
+	while(NULL!=p)
+	{
+		fprintf(fp,"%s,",p->cB_Number);
+		fprintf(fp,"%s,",p->cB_Name);
+		fprintf(fp,"%s,",p->cB_Writer);
+		fprintf(fp,"%s,",p->cB_Count);
+		fprintf(fp,"%s,",p->cB_Price);
+		fprintf(fp,"%s",p->cB_Sort);
+		p=p->book_next;
+	}
+	fclose(fp);
+	fp=NULL;
+}
+void ReadFile(IN_PARAM Book *head)  //将结点内容输出 
+{
+	Book *p=(Book *)malloc(sizeof(Book));
+	p=head->book_next;
+	while(p)
+	{
+	printf("%s ",p->cB_Number);
+	printf("%s ",p->cB_Name);
+	printf("%s ",p->cB_Writer);
+	printf("%s ",p->cB_Count);
+	printf("%s ",p->cB_Price);
+	printf("%s",p->cB_Sort);
+	p=p->book_next;
+    }
+    free(p);
+    p=NULL;
+}
+Book* List()  //功能：将链表与图书信息进行链接 
+{
+	char cB_Name[18];   //书名  
+	char cB_Number[18]; //编号
+	char cB_Writer[18]; //作者
+	char cB_Count[18];      //剩余馆藏
+	char cB_Price[18];      //价格
+	char cB_Sort[18];   //种类
+	char *cLine,*cRecord;
+	Book *p;
+	FILE *fp;
+	if((fp=fopen("book.csv","r+"))==NULL)
+	{
+		printf("打开文件失败，退出程序\n");
+		exit(1); 
+	}
+	Book *head=GetList();
+	cLine=(char *)malloc(sizeof(char)*64);
+	cRecord=(char *)malloc(sizeof(char)*64);
+	fseek(fp,0,SEEK_SET); //将文件指针指向文件头 
+	p=(Book *)malloc(sizeof(Book)); 
+	fgets(cLine,64,fp);
+	while(!(feof(fp))) //进行分割 
+	{	
+	AddNode(head,p);
+	cRecord=strtok(cLine,",");
+	strcpy(p->cB_Number,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Name,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Writer,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Count,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Price,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Sort,cRecord);
+	fgets(cLine,64,fp);
+	p=(Book *)malloc(sizeof(Book));
+    }
+	fclose(fp);
+	return head;
+};
+void Book_Delete(Book *head)             //图书删除 
+{
+	Book *p1_book,*p2_book,*p_book;
+	char cB_Number[18];
+	int flag=0;
+	int i_j=1;
+	Book *headbook=head;      //调用函数，返回链表的头结点
+	p_book = headbook->book_next;
+	printf("请输入你想要删除的书籍的编号：");
+	scanf("%s",cB_Number);
+	while(flag==0)
+	{
+	p1_book = headbook->book_next;
+	i_j=1;
+	while(NULL!=p1_book&&flag==0)
+	{
+		if(!(strcmp(cB_Number,p1_book->cB_Number)))
+		{
+			p2_book=p1_book;
+			flag=1; 
+		}
+		else
+		{
+		i_j++;
+		p1_book = p1_book->book_next;
+	    }
+	}
+	for(int i=1;i<i_j-1;i++)
+	{
+		p_book=p_book->book_next;
+	}
+	if(NULL==p1_book)
+	{
+		printf("并没有该编号的书籍\n");
+		printf("请重新输入\n");
+		scanf("%s",cB_Number);
+		p_book=headbook->book_next;
+	}
+    }
+    if(!(strcmp(headbook->book_next->cB_Number,p2_book->cB_Number)))
+    {
+    	headbook->book_next=p2_book->book_next;
+		p2_book=NULL;
+    	free(p2_book);
+ 
+	}
+	else
+	{
+		p1_book=p2_book->book_next;
+		p_book->book_next=p1_book; 
+		free(p2_book);
+	}
+	WriteFile(headbook);
+	free(headbook);
+	p1_book=NULL;
+	free(p1_book);
+	free(p_book);
+}
+
+小鱼のtea 2018/7/9 0:00:59
