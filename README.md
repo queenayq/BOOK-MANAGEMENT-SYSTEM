@@ -1,0 +1,80 @@
+# BOOK-MANAGEMENT-SYSTEM
+#define _CRT_SECURE_NO_DEPRECATE
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<malloc.h>
+#include<windows.h>//光标定位函数的函数库 
+#include<conio.h>  
+#include<ctype.h> 
+	int p = 0;
+	char ch;
+	int choose;
+	char cP_Number[18];
+	char cP_code[18];
+	const char *password = "123456";
+	int i = 1;
+	char cp_Code[18] = { NULL };
+int main()
+{
+	printf("**********欢迎来到图书馆管理系统**********\n");
+	printf(" 身份如下： \n");
+	printf("   1.系统管理员\n");
+	printf("   2.图书管理员\n");
+	printf("   3.学生\n");
+	printf("   4.老师\n");
+	printf("                                          \n");
+	printf("  #请选择你的身份：");
+	scanf("%d", &choose);
+	system("cls");
+	printf("                                          \n");
+	system("cls");//清屏  
+	p = 0;
+	printf("#请输入你的登录账号：");
+	scanf("%s", cP_Number);
+	while (1)
+	{
+		printf("请输入你的登录密码:");
+		while ((ch = _getch()) != '\r')//判断是否是回车  
+		{
+			if (ch == 8)//实现backspace键的功能，其中backspace键的ascii码是8  
+			{
+				putchar('\b');  
+				putchar(' ');
+				putchar('\b');
+				if (p > 0)//最多只能删到没有字符  
+				p--;
+			}
+			if (!isdigit(ch) && !isalpha(ch))//判断是否是数字或字符  
+				continue;
+			putchar('*');//在屏幕上打印星号  
+			cP_code[p++] = ch;//保存密码  
+		}
+		cP_code[p] = '\0';//结束字符串  
+		p = 0;
+		if (!strcmp(cP_code, password))
+		{
+			system("cls");
+			printf("\n账号：\n%s\n密码：\n%s\n", cP_Number,cP_code);
+			printf("欢迎访问图书馆管理系统！\n");
+			break;
+		}
+		else
+		{
+			if (i < 3)
+			{
+				printf("\n密码错误，你还有%d次机会，", 3 - i);
+			}
+			else
+			{
+				system("cls");
+				printf("密码错误，登录失败！\n");
+				system("pause");
+				break;
+			}
+			i++;
+		}
+	}
+	system("pause");
+	return 0;
+}
