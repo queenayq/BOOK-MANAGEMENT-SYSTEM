@@ -1,0 +1,38 @@
+Person *Login(Person *Head) //入口参数为人物链表表头 返回值为指向该人物的链表指针
+{
+    Person *pt;
+    char cNumber[18];
+    char cCode[18];
+    int iLogin=0,iAns=0;
+
+    while(iAns==0)
+ {
+    pt=Head;
+    printf("please input your ID:");
+    scanf("%s",&cNumber);
+    printf("please input your code:");
+    scanf("%s",&cCode);
+    while(pt!=NULL)
+    {
+
+        if(0==strcmp(pt->cP_Number,cNumber)&&0==strcmp(pt->cP_Code,cCode))
+        {
+            break;
+        }
+        else
+        {
+            pt=pt->Pnext;
+        }
+    }
+    if(pt!=NULL)  //登录成功
+    {
+        printf("           login success!\n");
+        iAns=1;
+    }
+    else          //登录失败
+    {
+        printf("          no such ID or code error! please login again\n");
+    }
+ }
+    return pt;
+}
