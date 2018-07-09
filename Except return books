@@ -1,0 +1,567 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<malloc.h>
+#include<time.h> 
+#define IN_PARAM
+#define OUT_PARAM
+struct tm *Gettime()
+{
+   time_t timep;
+   struct tm *p;
+   time(&timep);
+   p=gmtime(&timep);
+   p->tm_year+=1900;
+   p->tm_mon+=1;
+   p->tm_mday;
+   return p;
+}
+typedef struct book
+{
+	char cB_Name[18];   //书名  
+	char cB_Number[18]; //编号
+	char cB_Writer[18]; //作者
+	char cB_Count[18];      //剩余馆藏
+	char cB_Price[18];      //价格
+	char cB_Sort[18];   //种类 
+	struct book *book_next; //指向下一个指针   
+}Book;
+typedef struct person
+{
+   char cP_Number[18];  //账号
+   char cp_Code[18];    //密码
+   char cP_Nmae[18];    //姓名 
+   char cp_Rank[10];    //等级
+   char cP_count[18];   //借书余额
+   struct     //借书信息
+   {
+   	  char cR_Name[18];   //书名
+   	  char cR_Start[18];  //借书日期
+   }rent[30];
+   struct person *Pnext;
+}Person;
+Book *GetList() //获得头结点 
+{
+	Book *head=(Book *)malloc(sizeof(Book));
+	head->book_next=NULL;
+	return head;
+}
+void AddNode(IN_PARAM Book *head,IN_PARAM Book *node) //增加结点 
+{
+	node->book_next=head->book_next;
+	head->book_next=node;
+}
+void WriteFile(IN_PARAM Book *head) //将结点内容写入文件中 此为重新写入 
+{
+	FILE *fp;
+	Book *p=head->book_next;
+	if((fp=fopen("book.csv","w+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(1);
+	}
+	while(NULL!=p)
+	{
+		fprintf(fp,"%s,",p->cB_Number);
+		fprintf(fp,"%s,",p->cB_Name);
+		fprintf(fp,"%s,",p->cB_Writer);
+		fprintf(fp,"%s,",p->cB_Count);
+		fprintf(fp,"%s,",p->cB_Price);
+		fprintf(fp,"%s",p->cB_Sort);
+		p=p->book_next;
+	}
+	fclose(fp);
+	fp=NULL;
+}
+int ReadFile(IN_PARAM Book *head)  //将结点内容输出 
+{
+	Book *p=(Book *)malloc(sizeof(Book));
+	p=head->book_next;
+	int flag=0; 
+	while(flag==0)
+	{
+	if(p)
+	{
+	printf("编号\t书名\t作者\t馆藏数\t价格\t种类\t\n");
+    }
+	while(p!=NULL)
+	{
+	flag=1;
+	printf("%s ",p->cB_Number);
+	printf("%s ",p->cB_Name);
+	printf("%s ",p->cB_Writer);
+	printf("%s ",p->cB_Count);
+	printf("%s ",p->cB_Price);
+	printf("%s\n",p->cB_Sort);
+	p=p->book_next;
+    }
+    if(flag==0)
+    {
+    printf("没有书本存在\n");
+    flag=1;
+    p=NULL;
+    free(p);
+    return 1;
+	}
+    }
+    return 2;
+    p=NULL;
+    free(p);
+}
+Book* List()  //功能：将链表与图书信息进行链接 
+{
+	char cB_Name[18];   //书名  
+	char cB_Number[18]; //编号
+	char cB_Writer[18]; //作者
+	char cB_Count[18];      //剩余馆藏
+	char cB_Price[18];      //价格
+	char cB_Sort[18];   //种类
+	char *cLine,*cRecord;
+	Book *p;
+	FILE *fp;
+	if((fp=fopen("book.csv","r+"))==NULL)
+	{
+		printf("打开文件失败，退出程序\n");
+		exit(1); 
+	}
+	Book *head=GetList();
+	cLine=(char *)malloc(sizeof(char)*64);
+	cRecord=(char *)malloc(sizeof(char)*64);
+	fseek(fp,0,SEEK_SET); //将文件指针指向文件头 
+	p=(Book *)malloc(sizeof(Book)); 
+	fgets(cLine,64,fp);
+	while(!(feof(fp))) //进行分割 
+	{	
+	AddNode(head,p);
+	cRecord=strtok(cLine,",");
+	strcpy(p->cB_Number,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Name,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Writer,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Count,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Price,cRecord);
+	cRecord=strtok(NULL,",");
+	strcpy(p->cB_Sort,cRecord);
+	fgets(cLine,64,fp);
+	p=(Book *)malloc(sizeof(Book));
+    }
+	fclose(fp);
+	return head;
+};
+Book *QueryBook(IN_PARAM char *cSeek,IN_PARAM int i_funtion) //查询图书 
+{
+	Book *head=List();  //生成链表 
+	int i_judge=0,flag=0;
+	Book *node,*head_2,*end;
+	end=(Book *)malloc(sizeof(Book)); 
+	if(NULL==head->book_next)
+	{
+		printf("图书库存储的书籍量为零\n");
+		printf("不能进行查询\n");
+		return NULL;
+	}
+	else{
+	head_2=(Book *)malloc(sizeof(Book));
+	node=(Book *)malloc(sizeof(Book));
+	node=head->book_next;
+	if(i_funtion==1) //查询名字 
+	{
+	while(NULL!=node)
+	{
+		i_judge+=1;
+		if(!(strcmp(cSeek,node->cB_Name)))
+		{
+			flag+=1;
+			AddNode(head_2,node);
+			if(flag==1)
+		{
+			end=node;
+		}
+		}
+		head=List();
+		node=head->book_next;
+		for(int i=0;i<i_judge;i++)
+		{
+		node=node->book_next;
+		}
+	}
+	end->book_next=NULL;
+	}
+	else if(i_funtion==3) //查询编号 
+	{
+	while(NULL!=node)
+	{
+		i_judge+=1;
+		if(!(strcmp(cSeek,node->cB_Number)))
+		{
+			flag+=1;
+			AddNode(head_2,node);
+			if(flag==1)
+			{
+				end=node;
+			}
+		}
+		head=List();
+		node=head->book_next;
+		for(int i=0;i<i_judge;i++)
+		{
+		node=node->book_next;
+		}
+	}
+	end->book_next=NULL;
+	}
+	else if(i_funtion==2) //查询作者 
+	{
+	while(NULL!=node)
+	{
+		i_judge+=1;
+		if(!(strcmp(cSeek,node->cB_Writer)))
+		{
+			flag+=1;
+			AddNode(head_2,node);
+			if(flag==1)
+			{
+			end=node;
+			}
+		}
+		head=List();
+		node=head->book_next;
+		for(int i=0;i<i_judge;i++)
+		{
+		node=node->book_next;
+		}
+	}
+	end->book_next=NULL;
+	}
+	else if(i_funtion==4) //查询种类 
+	{
+		while(NULL!=node)
+		{
+		i_judge+=1;
+		if(!(strcmp(cSeek,node->cB_Sort)))
+		{
+			flag+=1;
+			AddNode(head_2,node);
+			if(flag==1)
+			{
+				end=node;
+			}
+		}
+		head=List();
+		node=head->book_next;
+		for(int i=0;i<i_judge;i++)
+		{
+		node=node->book_next;
+		}
+	    }
+	    end->book_next=NULL;
+	}
+	return head_2;
+    }
+};
+void Book_Type()  //录入图书 
+{
+	printf("请输入想要录入图书信息的个数\n");
+	int iB_Number;
+	scanf("%d",&iB_Number);
+	char cB_Number[18];
+	char cB_Name[18];
+	char cB_Writer[18];
+	char cB_Count[18];
+	char cB_Price[18];
+	char cB_Sort[18];
+	FILE *fp;
+	if((fp=fopen("book.csv","w+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(1);
+	}
+	for(int i=0;i<iB_Number;i++)
+	{
+	printf("请输入第%d本书的信息\n",i+1);
+	printf("请依次输入编号\t书名\t作者\t馆藏数\t价格\t种类\t\n\t");
+	scanf("%s",cB_Number);
+	scanf("%s",cB_Name);
+	scanf("%s",cB_Writer);
+	scanf("%s",cB_Count);
+	scanf("%s",cB_Price);
+	scanf("%s",cB_Sort);
+    fprintf(fp,"%s,",cB_Number);
+	fprintf(fp,"%s,",cB_Name);
+	fprintf(fp,"%s,",cB_Writer);
+	fprintf(fp,"%s,",cB_Count);
+	fprintf(fp,"%s,",cB_Price);
+	fprintf(fp,"%s\n",cB_Sort);
+	}
+	fclose(fp);
+	fp=NULL; 
+}
+void Book_Insert() //图书插入 
+{
+	Book *node;
+	Book *head_2;
+	int flag=0;
+	node=(Book *)malloc(sizeof(Book));
+	printf("请依次输入图书下列信息\n");
+	printf("编号：");
+	scanf("%s",node->cB_Number);
+	while(flag==0)
+	{
+	head_2=QueryBook(node->cB_Number,3);
+	if(NULL==head_2->book_next)
+	{
+		flag=1;
+	}
+	else{
+	printf("书库中已经存在相同编号的书籍\n"); //判断编号唯一性 
+	printf("请重新输入编号：");
+	scanf("%s",node->cB_Number);
+    }
+    }
+    head_2=NULL;
+    free(head_2);
+	printf("书名：");
+	scanf("%s",node->cB_Name);
+	printf("作者：");
+	scanf("%s",node->cB_Writer);
+	printf("馆藏数：");
+	scanf("%s",node->cB_Count);
+	printf("价格：");
+	scanf("%s",node->cB_Price);
+	printf("种类：");
+	scanf("%s",node->cB_Sort);
+	FILE *fp;
+	if((fp=fopen("book.csv","a+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(1);
+	}
+    fprintf(fp,"%s,",node->cB_Number);
+	fprintf(fp,"%s,",node->cB_Name);
+	fprintf(fp,"%s,",node->cB_Writer);
+	fprintf(fp,"%s,",node->cB_Count);
+	fprintf(fp,"%s,",node->cB_Price);
+	fprintf(fp,"%s\n",node->cB_Sort);
+	fclose(fp);
+	fp=NULL;
+	node=NULL;
+	free(node);
+};
+int Book_Delete(char *cB_Number)             //图书删除 
+{
+	Book *head=List();
+	Book *p1_book,*p2_book=NULL,*p_book;
+	int flag=0;
+	int i_j=1;
+	Book *headbook=head;      //调用函数，返回链表的头结点
+	p_book = headbook->book_next; //删除结点的前一结点 
+	p1_book=headbook->book_next; //确定删除结点 
+	while(NULL!=p1_book&&flag==0)  
+	{
+		if(!(strcmp(cB_Number,p1_book->cB_Number)))
+		{
+			p2_book=p1_book; // 确定结点 
+			flag=1;             //找到书本的标志 
+		}
+		else
+		{
+		i_j++;
+		p1_book = p1_book->book_next;
+	    }
+	}
+	for(int i=1;i<i_j-1;i++) //确定删除书本的前一结点 
+	{
+		p_book=p_book->book_next;
+	}
+	if(NULL==p1_book) //未找到该书本 
+	{
+		printf("书库中未含有该本书\n");
+		return 1;
+	}
+    else if(!(strcmp(headbook->book_next->cB_Number,p2_book->cB_Number)))
+    {
+    	headbook->book_next=p2_book->book_next;
+		p2_book=NULL;
+    	free(p2_book);
+	}
+	else
+	{
+		p1_book=p2_book->book_next;
+		p_book->book_next=p1_book; 
+		free(p2_book);
+	}
+	WriteFile(headbook);
+	free(headbook);
+	p1_book=NULL;
+	free(p1_book);
+	free(p_book);
+	return 2;
+}
+void ReviseBook()  //图书修改 
+{
+	printf("请输入需要修改书本的编号\n");
+	char cB_Number[18];
+	Book *head,*node,*head_2;
+	scanf("%s",cB_Number);
+	int flag=0;
+	while(flag==0)
+	{
+		head=QueryBook(cB_Number,3);
+		if(NULL==head->book_next)
+		{
+			printf("输入编号不存在，请重新输入\n");
+			scanf("%s",cB_Number);
+		}
+		else
+		{
+			flag=1;
+		}
+	}
+	flag=0;
+	node=(Book *)malloc(sizeof(Book));
+	node=head->book_next;
+	Book_Delete(cB_Number);
+	printf("请输入修改后的图书信息\n");
+	printf("编号：");
+	scanf("%s",node->cB_Number);
+	while(flag==0)
+	{
+	head_2=QueryBook(node->cB_Number,3);
+	if(NULL==head_2->book_next)
+	{
+		flag=1;
+	}
+	else{
+	printf("书库中已经存在相同编号的书籍\n");
+	printf("请重新输入编号：");
+	scanf("%s",node->cB_Number);
+    }
+    }
+    head_2=NULL;
+	free(head_2);
+	printf("书名：");
+	scanf("%s",node->cB_Name);
+	printf("作者：");
+	scanf("%s",node->cB_Writer);
+	printf("馆藏数：");
+	scanf("%s",node->cB_Count);
+	printf("价格：");
+	scanf("%s",node->cB_Price);
+	printf("种类：");
+	scanf("%s",node->cB_Sort);
+	FILE *fp;
+	if((fp=fopen("book.csv","a+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(1);
+	}
+    fprintf(fp,"%s,",node->cB_Number);
+	fprintf(fp,"%s,",node->cB_Name);
+	fprintf(fp,"%s,",node->cB_Writer);
+	fprintf(fp,"%s,",node->cB_Count);
+	fprintf(fp,"%s,",node->cB_Price);
+	fprintf(fp,"%s",node->cB_Sort);
+	fclose(fp);
+	fp=NULL;
+	head=NULL;
+	free(head);
+	node=NULL;
+	free(node);
+}
+void Book_Borrow(Person *P_node) //图书借阅
+{
+    Book *pt,*node,*head_2;    //指向要借阅的书籍
+    char cBook[18],tmp[20];
+    char cB_Number[18];
+    time_t timep;  //
+    struct tm *Time;
+    int iNum=0,iWay=0;
+    int iBNum=0;
+	int iPNum=0;
+	int i_flag=1,i_flag2=0; 
+    char cP_Count[18];
+    int i_judge=0; 
+    printf("请输入查询书籍方式：1.按书名 2.按作者 3.按编号 4.按种类\n");
+    scanf("%d",&iWay);
+    while(i_judge==0)
+    {
+    while(iWay!=1&&iWay!=2&&iWay!=3&&iWay!=4)
+    {
+        printf("输入错误,请重新输入选项：");
+        scanf("%d",&iWay);
+    }
+    while(i_flag==1)
+    {
+    if(i_flag2==0)
+    {
+    printf("请输入书籍信息：");
+    i_flag2=1;
+    }
+    else
+    {
+    printf("请再次输入书籍信息:");
+    }
+    scanf("%s",cBook);
+    pt=QueryBook(cBook,iWay);
+    i_flag=ReadFile(pt);
+    }
+    printf("请输入所借书的编号\n");
+	scanf("%s",cB_Number);
+	head_2=QueryBook(cB_Number,3);
+	while(NULL==head_2->book_next)
+	{
+		printf("输入所借书编号不存在\n");
+		printf("请重新输入\n");
+		scanf("%s",cB_Number);
+		head_2=QueryBook(cB_Number,3);
+	}
+    node=(Book *)malloc(sizeof(Book));
+    node=head_2->book_next;
+    iBNum=atoi(node->cB_Count);
+	if(iBNum==0)
+    {
+    printf("此本书馆藏数为零\n");
+    printf("输入数字'0'重新选择查询书籍方式，否则退出");
+    scanf("%d",&i_judge);
+	}   
+    else if(iBNum!=0)
+    {
+    iBNum--;                   //馆藏减一
+    itoa(iBNum,node->cB_Count,10);//书本馆藏数减一 
+    iPNum=atoi(P_node->cP_count);
+    if(!(strcmp("学生",P_node->cp_Rank)))
+	{
+    iPNum=10-iPNum;
+    }
+    else
+    {
+    iPNum=30-iPNum;
+	}
+    strcpy(P_node->rent[iPNum].cR_Name,node->cB_Name);
+    Time=Gettime();
+    sprintf(tmp,"%d.%d.%d",Time->tm_year,Time->tm_mon,Time->tm_mday);
+    strcpy(P_node->rent[iNum].cR_Start,tmp);    //记录借书时间
+    iPNum=atoi(P_node->cP_count);               //借书余额减一
+    iPNum--;
+    itoa(iPNum,P_node->cP_count,10);
+    Book_Delete(cB_Number); 
+    FILE *fp;
+	if((fp=fopen("book.csv","a+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(1);
+	}
+    fprintf(fp,"%s,",node->cB_Number);
+	fprintf(fp,"%s,",node->cB_Name);
+	fprintf(fp,"%s,",node->cB_Writer);
+	fprintf(fp,"%s,",node->cB_Count);
+	fprintf(fp,"%s,",node->cB_Price);
+	fprintf(fp,"%s",node->cB_Sort);
+	fclose(fp);
+    }
+    i_judge=1;
+	}
+}
