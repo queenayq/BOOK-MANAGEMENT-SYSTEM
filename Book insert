@@ -1,0 +1,57 @@
+
+void Book_Insert()
+{
+	Book *node;
+	Book *head_2;
+	int flag=0;
+	node=(Book *)malloc(sizeof(Book));
+	printf("请依次输入插入图书下列信息\n");
+	printf("编号：");
+	scanf("%s",node->cB_Number);
+	while(flag==0)
+	{
+	head_2=QueryBook(node->cB_Number,3);
+	if(NULL==head_2->book_next)
+	{
+		flag=1;
+	}
+	else{
+	printf("书库中已经存在相同编号的书籍\n");
+	printf("请重新输入编号：");
+	scanf("%s",node->cB_Number);
+    }
+    }
+    head_2=NULL;
+    free(head_2);
+	printf("书名：");
+	scanf("%s",node->cB_Name);
+	printf("作者：");
+	scanf("%s",node->cB_Writer);
+	printf("馆藏数：");
+	scanf("%s",node->cB_Count);
+	printf("价格：");
+	scanf("%s",node->cB_Price);
+	printf("种类：");
+	scanf("%s",node->cB_Sort);
+	FILE *fp;
+	if((fp=fopen("book.csv","a+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(1);
+	}
+    fprintf(fp,"%s,",node->cB_Number);
+	fprintf(fp,"%s,",node->cB_Name);
+	fprintf(fp,"%s,",node->cB_Writer);
+	fprintf(fp,"%s,",node->cB_Count);
+	fprintf(fp,"%s,",node->cB_Price);
+	fprintf(fp,"%s\n",node->cB_Sort);
+	fclose(fp);
+	fp=NULL;
+	node=NULL;
+	free(node);
+}
+int main()
+{
+	Book_Insert();
+	return 0;
+}
