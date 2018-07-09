@@ -108,7 +108,7 @@ Book* List()  //功能：将链表与图书信息进行链接
     }
 	fclose(fp);
 	return head;
-};
+}
 void Book_Delete(Book *head)             //图书删除 
 {
 	Book *p1_book,*p2_book,*p_book;
